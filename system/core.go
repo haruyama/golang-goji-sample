@@ -11,6 +11,8 @@ import (
 	"reflect"
 	"strings"
 
+	"crypto/sha256"
+
 	"github.com/coopernurse/gorp"
 	"github.com/golang/glog"
 	"github.com/gorilla/sessions"
@@ -42,7 +44,9 @@ func (application *Application) Init(filename *string) {
 		panic(err)
 	}
 
-	application.Store = sessions.NewCookieStore([]byte(application.Configuration.Secret))
+	hash := sha256.New()
+	hash.Write([]byte(application.Configuration.Secret))
+	application.Store = sessions.NewCookieStore(hash.Sum(nil))
 	application.Store.Options = &sessions.Options{
 		HttpOnly: true,
 		// Secure: true,
