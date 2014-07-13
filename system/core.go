@@ -43,6 +43,10 @@ func (application *Application) Init(filename *string) {
 	}
 
 	application.Store = sessions.NewCookieStore([]byte(application.Configuration.Secret))
+	application.Store.Options = &sessions.Options{
+		HttpOnly: true,
+		// Secure: true,
+	}
 	dbConfig := application.Configuration.Database
 	application.DbMap = models.GetDbMap(dbConfig.User, dbConfig.Password, dbConfig.Hostname, dbConfig.Database)
 }
