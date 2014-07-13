@@ -1,0 +1,11 @@
+{
+	"secret": "secret",
+	"public_path": "public",
+	"template_path": "views",	
+	"database": {
+		"host": "localhost",
+		"user": "root",
+		"password": "kuke-",
+		"database": "goji-sample"
+	}
+}

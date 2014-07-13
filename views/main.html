@@ -1,0 +1,48 @@
+{{define "main"}}
+	{{template "header" .}}
+	<!-- Fixed navbar -->
+	<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="/">Default Project</a>
+			</div>
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav">
+					<li {{if .IsIndex }}class="active"{{end}}><a href="/">Home</a></li>
+					<!-- YOU CAN REMOVE THESE ENDORSEMENTS -->
+					<li>
+						<p class="navbar-text github">					
+							<iframe src="http://ghbtns.com/github-btn.html?user=elcct&type=follow&count=true" height="30" width="168" frameborder="0" scrolling="0" style="width:168px; height: 30px;" allowTransparency="true"></iframe>
+						</p>
+					</li>
+					<!-- END OF ENDORSEMENTS -->
+				</ul>
+				{{if .User}}
+				<ul class="nav navbar-nav navbar-right">
+					<li>
+						<p class="navbar-text">
+							Hello, {{ .User.Email}}
+						</p>
+					</li>
+					<li><a href="/logout">Logout</a></li>
+				</ul>
+				{{else}}
+				<ul class="nav navbar-nav navbar-right">
+					<li {{if .IsSignIn }}class="active"{{end}}><a href="/signin">Sign In</a></li>
+					<li {{if .IsSignUp }}class="active"{{end}}><a href="/signup">Sign Up</a></li>
+				</ul>
+				{{end}}				
+			</div><!--/.nav-collapse -->
+		</div>
+	</div>
+	<div class="container" role="main">		
+	{{.Content}}	
+	</div>
+	{{template "footer" .}}
+{{end}}
