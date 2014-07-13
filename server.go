@@ -34,6 +34,7 @@ func main() {
 	// Apply middleware
 	goji.Use(application.ApplyTemplates)
 	goji.Use(application.ApplySessions)
+	goji.Use(application.ApplyDbMap)
 	goji.Use(application.ApplyAuth)
 
 	controller := &controllers.MainController{}

@@ -3,11 +3,11 @@ package system
 import (
 	"net/http"
 
+	"github.com/coopernurse/gorp"
 	"github.com/golang/glog"
 	"github.com/gorilla/sessions"
 	"github.com/haruyama/golang-goji-sample/models"
 	"github.com/zenazn/goji/web"
-	"labix.org/v2/mgo/bson"
 )
 
 // Makes sure templates are stored in the context
@@ -29,11 +29,19 @@ func (application *Application) ApplySessions(c *web.C, h http.Handler) http.Han
 	return http.HandlerFunc(fn)
 }
 
+func (application *Application) ApplyDbMap(c *web.C, h http.Handler) http.Handler {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		c.Env["DbMap"] = application.DbMap
+		h.ServeHTTP(w, r)
+	}
+	return http.HandlerFunc(fn)
+}
+
 func (application *Application) ApplyAuth(c *web.C, h http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		session := c.Env["Session"].(*sessions.Session)
-		if userId, ok := session.Values["User"].(bson.ObjectId); ok {
-			dbMap := models.GetDbMap()
+		if userId, ok := session.Values["UserId"]; ok {
+			dbMap := c.Env["DbMap"].(*gorp.DbMap)
 
 			user, err := dbMap.Get(models.User{}, userId)
 			if err != nil {

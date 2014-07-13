@@ -54,7 +54,7 @@ func (controller *MainController) SignInPost(c web.C, r *http.Request) (string, 
 	email, password := r.FormValue("email"), r.FormValue("password")
 
 	session := controller.GetSession(c)
-	dbMap := models.GetDbMap()
+	dbMap := controller.GetDbMap(c)
 
 	user, err := helpers.Login(dbMap, email, password)
 
@@ -63,7 +63,7 @@ func (controller *MainController) SignInPost(c web.C, r *http.Request) (string, 
 		return controller.SignIn(c, r)
 	}
 
-	session.Values["User"] = user.Id
+	session.Values["UserId"] = user.Id
 
 	return "/", http.StatusSeeOther
 }
@@ -91,7 +91,7 @@ func (controller *MainController) SignUpPost(c web.C, r *http.Request) (string, 
 	email, password := r.FormValue("email"), r.FormValue("password")
 
 	session := controller.GetSession(c)
-	dbMap := models.GetDbMap()
+	dbMap := controller.GetDbMap(c)
 
 	user := models.GetUserByEmail(dbMap, email)
 
@@ -112,7 +112,7 @@ func (controller *MainController) SignUpPost(c web.C, r *http.Request) (string, 
 		return controller.SignUp(c, r)
 	}
 
-	session.Values["User"] = user.Id
+	session.Values["UserId"] = user.Id
 
 	return "/", http.StatusSeeOther
 }
@@ -121,7 +121,7 @@ func (controller *MainController) SignUpPost(c web.C, r *http.Request) (string, 
 func (controller *MainController) Logout(c web.C, r *http.Request) (string, int) {
 	session := controller.GetSession(c)
 
-	session.Values["User"] = nil
+	session.Values["UserId"] = nil
 
 	return "/", http.StatusSeeOther
 }

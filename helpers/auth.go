@@ -8,7 +8,7 @@ import (
 
 func Login(dbMap *gorp.DbMap, email string, password string) (*models.User, error) {
 	var user models.User
-	err := dbMap.SelectOne(&user, "SELECT * FROM users WHERE Email = ?", email)
+	err := dbMap.SelectOne(&user, "SELECT * FROM Users WHERE Email = ?", email)
 	if err != nil {
 		return nil, err
 	}

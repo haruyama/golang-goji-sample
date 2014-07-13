@@ -2,15 +2,17 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	"code.google.com/p/go.crypto/bcrypt"
 	"github.com/coopernurse/gorp"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang/glog"
 )
 
 type User struct {
-	Id       int64 `db:"user_id"`
+	Id       int64 `db:"UserId"`
 	Email    string
 	Username string
 	Password []byte
@@ -26,7 +28,7 @@ func (user *User) HashPassword(password string) {
 }
 
 func GetUserByEmail(dbMap *gorp.DbMap, email string) (user *User) {
-	err := dbMap.SelectOne(&user, "SELECT * FROM users where email = ?", email)
+	err := dbMap.SelectOne(&user, "SELECT * FROM Users where Email = ?", email)
 
 	if err != nil {
 		glog.Warningf("Can't get user by email: %v", err)
@@ -35,29 +37,29 @@ func GetUserByEmail(dbMap *gorp.DbMap, email string) (user *User) {
 }
 
 func InsertUser(dbMap *gorp.DbMap, user *User) error {
-	return dbMap.Insert(&user)
+	return dbMap.Insert(user)
 }
 
-func GetDbMap() *gorp.DbMap {
+func GetDbMap(user, password, hostname, database string) *gorp.DbMap {
 	// connect to db using standard Go database/sql API
 	// use whatever database/sql driver you wish
 	//TODO: Get user, password and database from config.
-	db, err := sql.Open("mysql", "root:password@/goji")
+	db, err := sql.Open("mysql", fmt.Sprint(user, ":", password, "@", hostname, "/", database))
 	checkErr(err, "sql.Open failed")
 
 	// construct a gorp DbMap
-	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{"InnoDB", "UTF8MB4"}}
+	dbMap := &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{"InnoDB", "UTF8MB4"}}
 
 	// add a table, setting the table name to 'posts' and
 	// specifying that the Id property is an auto incrementing PK
-	dbmap.AddTableWithName(User{}, "users").SetKeys(true, "Id")
+	dbMap.AddTableWithName(User{}, "Users").SetKeys(true, "Id")
 
 	// create the table. in a production system you'd generally
 	// use a migration tool, or create the tables via scripts
-	err = dbmap.CreateTablesIfNotExists()
+	err = dbMap.CreateTablesIfNotExists()
 	checkErr(err, "Create tables failed")
 
-	return dbmap
+	return dbMap
 }
 
 func checkErr(err error, msg string) {

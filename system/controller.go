@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"html/template"
 
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/coopernurse/gorp"
 	"github.com/gorilla/sessions"
 	"github.com/zenazn/goji/web"
 )
@@ -18,6 +18,10 @@ func (controller *Controller) GetSession(c web.C) *sessions.Session {
 
 func (controller *Controller) GetTemplate(c web.C) *template.Template {
 	return c.Env["Template"].(*template.Template)
+}
+
+func (controller *Controller) GetDbMap(c web.C) *gorp.DbMap {
+	return c.Env["DbMap"].(*gorp.DbMap)
 }
 
 func (controller *Controller) Parse(t *template.Template, name string, data interface{}) string {

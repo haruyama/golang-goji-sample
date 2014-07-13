@@ -1,37 +1,31 @@
 package system
 
 import (
-	"encoding/gob"
 	"encoding/json"
-	"net/http"
-
-	"github.com/golang/glog"
-	"labix.org/v2/mgo/bson"
-
-	"reflect"
-
-	"github.com/zenazn/goji/web"
-
-	"github.com/gorilla/sessions"
-
 	"html/template"
-
 	"io"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
+
+	"github.com/coopernurse/gorp"
+	"github.com/golang/glog"
+	"github.com/gorilla/sessions"
+	"github.com/haruyama/golang-goji-sample/models"
+	"github.com/zenazn/goji/web"
 )
 
 type Application struct {
 	Configuration *Configuration
 	Template      *template.Template
 	Store         *sessions.CookieStore
+	DbMap         *gorp.DbMap
 }
 
 func (application *Application) Init(filename *string) {
-	gob.Register(bson.ObjectId(""))
-
 	data, err := ioutil.ReadFile(*filename)
 
 	if err != nil {
@@ -49,6 +43,8 @@ func (application *Application) Init(filename *string) {
 	}
 
 	application.Store = sessions.NewCookieStore([]byte(application.Configuration.Secret))
+	dbConfig := application.Configuration.Database
+	application.DbMap = models.GetDbMap(dbConfig.User, dbConfig.Password, dbConfig.Hostname, dbConfig.Database)
 }
 
 func (application *Application) LoadTemplates() error {

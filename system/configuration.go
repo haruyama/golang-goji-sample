@@ -1,13 +1,15 @@
 package system
 
 type ConfigurationDatabase struct {
-	Hosts string `json:"hosts"`
+	User     string `json:"user"`
+	Password string `json:"password"`
+	Hostname string `json:"hostname"`
 	Database string `json:"database"`
 }
 
 type Configuration struct {
-	Secret   string `json:"secret"`
-	PublicPath string `json:"public_path"`
+	Secret       string `json:"secret"`
+	PublicPath   string `json:"public_path"`
 	TemplatePath string `json:"template_path"`
-	Database ConfigurationDatabase
+	Database     ConfigurationDatabase
 }
