@@ -1,10 +1,8 @@
 package system
 
 import (
-	"encoding/json"
 	"html/template"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -17,42 +15,38 @@ import (
 	"github.com/golang/glog"
 	"github.com/gorilla/sessions"
 	"github.com/haruyama/golang-goji-sample/models"
+	"github.com/pelletier/go-toml"
 	"github.com/zenazn/goji/web"
 )
 
 type Application struct {
-	Configuration *Configuration
-	Template      *template.Template
-	Store         *sessions.CookieStore
-	DbMap         *gorp.DbMap
+	Config   *toml.TomlTree
+	Template *template.Template
+	Store    *sessions.CookieStore
+	DbMap    *gorp.DbMap
 }
 
 func (application *Application) Init(filename *string) {
-	data, err := ioutil.ReadFile(*filename)
 
+	config, err := toml.LoadFile(*filename)
 	if err != nil {
-		glog.Fatalf("Can't read configuration file: %s", err)
-		panic(err)
-	}
-
-	application.Configuration = &Configuration{}
-
-	err = json.Unmarshal(data, &application.Configuration)
-
-	if err != nil {
-		glog.Fatalf("Can't parse configuration file: %s", err)
-		panic(err)
+		glog.Fatalf("TOML load failed: %s\n", err)
 	}
 
 	hash := sha256.New()
-	hash.Write([]byte(application.Configuration.Secret))
+	hash.Write([]byte(config.Get("cookie.mac_secret").(string)))
 	application.Store = sessions.NewCookieStore(hash.Sum(nil))
 	application.Store.Options = &sessions.Options{
 		HttpOnly: true,
 		// Secure: true,
 	}
-	dbConfig := application.Configuration.Database
-	application.DbMap = models.GetDbMap(dbConfig.User, dbConfig.Password, dbConfig.Hostname, dbConfig.Database)
+	dbConfig := config.Get("database").(*toml.TomlTree)
+	application.DbMap = models.GetDbMap(dbConfig.Get("user").(string),
+		dbConfig.Get("password").(string),
+		dbConfig.Get("hostname").(string),
+		dbConfig.Get("database").(string))
+
+	application.Config = config
 }
 
 func (application *Application) LoadTemplates() error {
@@ -65,7 +59,7 @@ func (application *Application) LoadTemplates() error {
 		return nil
 	}
 
-	err := filepath.Walk(application.Configuration.TemplatePath, fn)
+	err := filepath.Walk(application.Config.Get("general.template_path").(string), fn)
 
 	if err != nil {
 		return err

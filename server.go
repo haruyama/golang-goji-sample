@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	filename := flag.String("config", "config.json", "Path to configuration file")
+	filename := flag.String("config", "config.toml", "Path to configuration file")
 
 	flag.Parse()
 	defer glog.Flush()
@@ -27,7 +27,8 @@ func main() {
 
 	// Setup static files
 	static := web.New()
-	static.Get("/assets/*", http.StripPrefix("/assets/", http.FileServer(http.Dir(application.Configuration.PublicPath))))
+	publicPath := application.Config.Get("general.public_path").(string)
+	static.Get("/assets/*", http.StripPrefix("/assets/", http.FileServer(http.Dir(publicPath))))
 
 	http.Handle("/assets/", static)
 
@@ -41,8 +42,8 @@ func main() {
 	controller := &controllers.MainController{}
 
 	// Couple of files - in the real world you would use nginx to serve them.
-	goji.Get("/robots.txt", http.FileServer(http.Dir(application.Configuration.PublicPath)))
-	goji.Get("/favicon.ico", http.FileServer(http.Dir(application.Configuration.PublicPath+"/images")))
+	goji.Get("/robots.txt", http.FileServer(http.Dir(publicPath)))
+	goji.Get("/favicon.ico", http.FileServer(http.Dir(publicPath+"/images")))
 
 	// Home page
 	goji.Get("/", application.Route(controller, "Index"))
