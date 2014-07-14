@@ -36,6 +36,7 @@ func main() {
 	goji.Use(application.ApplySessions)
 	goji.Use(application.ApplyDbMap)
 	goji.Use(application.ApplyAuth)
+	goji.Use(application.ApplyIsXhr)
 
 	controller := &controllers.MainController{}
 

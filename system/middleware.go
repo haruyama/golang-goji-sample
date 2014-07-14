@@ -55,3 +55,15 @@ func (application *Application) ApplyAuth(c *web.C, h http.Handler) http.Handler
 	}
 	return http.HandlerFunc(fn)
 }
+
+func (application *Application) ApplyIsXhr(c *web.C, h http.Handler) http.Handler {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("X-Requested-With") == "XMLHttpRequest" {
+			c.Env["IsXhr"] = true
+		} else {
+			c.Env["IsXhr"] = false
+		}
+		h.ServeHTTP(w, r)
+	}
+	return http.HandlerFunc(fn)
+}
