@@ -1,7 +1,12 @@
 package system
 
 import (
+	"crypto/rand"
+	"crypto/sha256"
+	"crypto/subtle"
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/coopernurse/gorp"
 	"github.com/golang/glog"
@@ -63,6 +68,58 @@ func (application *Application) ApplyIsXhr(c *web.C, h http.Handler) http.Handle
 		} else {
 			c.Env["IsXhr"] = false
 		}
+		h.ServeHTTP(w, r)
+	}
+	return http.HandlerFunc(fn)
+}
+
+func isValidToken(a, b string) bool {
+	x := []byte(a)
+	y := []byte(b)
+	if len(x) != len(y) {
+		return false
+	}
+	return subtle.ConstantTimeCompare(x, y) == 1
+}
+
+func (application *Application) ApplyCsrfProtection(c *web.C, h http.Handler) http.Handler {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		session := c.Env["Session"].(*sessions.Session)
+		csrfProtection := application.CsrfProtection
+		if _, ok := session.Values["CsrfToken"]; !ok {
+			hash := sha256.New()
+			buffer := make([]byte, 32)
+			_, err := rand.Read(buffer)
+			if err != nil {
+				glog.Fatalf("crypt/rand.Read failed: %s", err)
+			}
+			hash.Write(buffer)
+			session.Values["CsrfToken"] = fmt.Sprintf("%x", hash.Sum(nil))
+			if err = session.Save(r, w); err != nil {
+				glog.Fatal("session.Save() failed")
+			}
+		}
+		c.Env["CsrfKey"] = csrfProtection.Key
+		c.Env["CsrfToken"] = session.Values["CsrfToken"]
+		csrfToken := c.Env["CsrfToken"].(string)
+
+		if c.Env["IsXhr"].(bool) {
+			if !isValidToken(csrfToken, r.Header.Get(csrfProtection.Header)) {
+				http.Error(w, "Invalid Csrf Header", http.StatusBadRequest)
+			}
+		} else {
+			method := strings.ToUpper(r.Method)
+			if method == "POST" || method == "PUT" || method == "DELETE" {
+				if !isValidToken(csrfToken, r.PostFormValue(csrfProtection.Key)) {
+					http.Error(w, "Invalid Csrf Token", http.StatusBadRequest)
+				}
+			}
+		}
+		http.SetCookie(w, &http.Cookie{
+			Name:   csrfProtection.Cookie,
+			Value:  csrfToken,
+			Secure: csrfProtection.Secure,
+		})
 		h.ServeHTTP(w, r)
 	}
 	return http.HandlerFunc(fn)

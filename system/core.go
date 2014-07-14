@@ -19,11 +19,19 @@ import (
 	"github.com/zenazn/goji/web"
 )
 
+type CsrfProtection struct {
+	Key    string
+	Cookie string
+	Header string
+	Secure bool
+}
+
 type Application struct {
-	Config   *toml.TomlTree
-	Template *template.Template
-	Store    *sessions.CookieStore
-	DbMap    *gorp.DbMap
+	Config         *toml.TomlTree
+	Template       *template.Template
+	Store          *sessions.CookieStore
+	DbMap          *gorp.DbMap
+	CsrfProtection *CsrfProtection
 }
 
 func (application *Application) Init(filename *string) {
@@ -34,11 +42,11 @@ func (application *Application) Init(filename *string) {
 	}
 
 	hash := sha256.New()
-	hash.Write([]byte(config.Get("cookie.mac_secret").(string)))
+	io.WriteString(hash, config.Get("cookie.mac_secret").(string))
 	application.Store = sessions.NewCookieStore(hash.Sum(nil))
 	application.Store.Options = &sessions.Options{
 		HttpOnly: true,
-		// Secure: true,
+		Secure:   config.Get("cookie.secure").(bool),
 	}
 	dbConfig := config.Get("database").(*toml.TomlTree)
 	application.DbMap = models.GetDbMap(
@@ -47,6 +55,13 @@ func (application *Application) Init(filename *string) {
 		dbConfig.Get("hostname").(string),
 		dbConfig.Get("port").(string),
 		dbConfig.Get("database").(string))
+
+	application.CsrfProtection = &CsrfProtection{
+		Key:    config.Get("csrf.key").(string),
+		Cookie: config.Get("csrf.cookie").(string),
+		Header: config.Get("csrf.header").(string),
+		Secure: config.Get("cookie.secure").(bool),
+	}
 
 	application.Config = config
 }

@@ -5,12 +5,6 @@ Sample Web Application based on https://github.com/elcct/defaultproject
 - Goji - A web microframework for Golang - http://goji.io/
 - Gorilla web toolkit sessions - cookie (and filesystem) sessions - http://www.gorillatoolkit.org/pkg/sessions
 
-# TODO
-
-- Protecting CSRF.
-- Using YAML for config.
-- ...
-    
 # Dependencies
 
 Default Project requires `Go`, `MySQL` and few other tools installed.

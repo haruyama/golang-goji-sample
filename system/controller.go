@@ -24,6 +24,10 @@ func (controller *Controller) GetDbMap(c web.C) *gorp.DbMap {
 	return c.Env["DbMap"].(*gorp.DbMap)
 }
 
+func (controller *Controller) IsXhr(c web.C) bool {
+	return c.Env["IsXhr"].(bool)
+}
+
 func (controller *Controller) Parse(t *template.Template, name string, data interface{}) string {
 	var doc bytes.Buffer
 	t.ExecuteTemplate(&doc, name, data)
