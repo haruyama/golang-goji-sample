@@ -8,5 +8,6 @@ mac_secret= "secret string which has over 256-bit entropy"
 [database]
 user     = "root"
 password = ""
-hostname = ""
+hostname = "localhost"
+port     = "3306"
 database = "goji"

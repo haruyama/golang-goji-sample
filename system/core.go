@@ -41,9 +41,11 @@ func (application *Application) Init(filename *string) {
 		// Secure: true,
 	}
 	dbConfig := config.Get("database").(*toml.TomlTree)
-	application.DbMap = models.GetDbMap(dbConfig.Get("user").(string),
+	application.DbMap = models.GetDbMap(
+		dbConfig.Get("user").(string),
 		dbConfig.Get("password").(string),
 		dbConfig.Get("hostname").(string),
+		dbConfig.Get("port").(string),
 		dbConfig.Get("database").(string))
 
 	application.Config = config
