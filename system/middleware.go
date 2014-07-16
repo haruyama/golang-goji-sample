@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/coopernurse/gorp"
+	"github.com/go-utils/uslice"
 	"github.com/golang/glog"
 	"github.com/gorilla/sessions"
 	"github.com/haruyama/golang-goji-sample/models"
@@ -82,6 +83,12 @@ func isValidToken(a, b string) bool {
 	return subtle.ConstantTimeCompare(x, y) == 1
 }
 
+var csrfProtectionMethodForNoXhr = []string{"POST", "PUT", "DELETE"}
+
+func isCsrfProtectionMethodForNoXhr(method string) bool {
+	return uslice.StrHas(csrfProtectionMethodForNoXhr, strings.ToUpper(method))
+}
+
 func (application *Application) ApplyCsrfProtection(c *web.C, h http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		session := c.Env["Session"].(*sessions.Session)
@@ -108,8 +115,7 @@ func (application *Application) ApplyCsrfProtection(c *web.C, h http.Handler) ht
 				http.Error(w, "Invalid Csrf Header", http.StatusBadRequest)
 			}
 		} else {
-			method := strings.ToUpper(r.Method)
-			if method == "POST" || method == "PUT" || method == "DELETE" {
+			if isCsrfProtectionMethodForNoXhr(r.Method) {
 				if !isValidToken(csrfToken, r.PostFormValue(csrfProtection.Key)) {
 					http.Error(w, "Invalid Csrf Token", http.StatusBadRequest)
 				}
