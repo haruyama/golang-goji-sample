@@ -1,0 +1,31 @@
+{
+  "name": "golang-goji-sample",
+  "version": "0.0.0",
+  "description": "Sample Web Application based on https://github.com/elcct/defaultproject",
+  "main": "index.js",
+  "dependencies": {
+    "gulp": "^3.8.6"
+  },
+  "devDependencies": {
+    "gulp-bower": "0.0.6",
+    "gulp-csslint": "^0.1.4",
+    "gulp-cssmin": "^0.1.6",
+    "gulp-plumber": "^0.6.4",
+    "gulp-rename": "^1.2.0",
+    "main-bower-files": "^1.0.1",
+    "run-sequence": "^0.3.6"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/haruyama/golang-goji-sample"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/haruyama/golang-goji-sample/issues"
+  },
+  "homepage": "https://github.com/haruyama/golang-goji-sample"
+}

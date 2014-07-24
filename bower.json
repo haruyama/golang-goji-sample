@@ -1,0 +1,10 @@
+{
+  "name": "mobileportal",
+  "version": "0.0.0",
+  "dependencies": {
+    "angular-encode-uri": "~0.0.1"
+  },
+  "devDependencies": {
+    "uri.js": "~1.13.2"
+  }
+}

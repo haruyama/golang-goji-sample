@@ -26,3 +26,5 @@ _testmain.go
 *~
 .*.swp
 tmp/*
+/bower_components
+/node_modules
