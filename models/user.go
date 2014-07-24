@@ -44,7 +44,7 @@ func GetDbMap(user, password, hostname, port, database string) *gorp.DbMap {
 	// connect to db using standard Go database/sql API
 	// use whatever database/sql driver you wish
 	//TODO: Get user, password and database from config.
-	db, err := sql.Open("mysql", fmt.Sprint(user, ":", password, "@(", hostname, ":", port, ")/", database))
+	db, err := sql.Open("mysql", fmt.Sprint(user, ":", password, "@(", hostname, ":", port, ")/", database, "?charset=utf8mb4"))
 	checkErr(err, "sql.Open failed")
 
 	// construct a gorp DbMap
