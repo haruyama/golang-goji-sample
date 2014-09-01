@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/golang/glog"
+	"github.com/gorilla/context"
 
 	"github.com/haruyama/golang-goji-sample/controllers"
 	"github.com/haruyama/golang-goji-sample/system"
@@ -39,6 +40,7 @@ func main() {
 	goji.Use(application.ApplyAuth)
 	goji.Use(application.ApplyIsXhr)
 	goji.Use(application.ApplyCsrfProtection)
+	goji.Use(context.ClearHandler)
 
 	controller := &controllers.MainController{}
 
