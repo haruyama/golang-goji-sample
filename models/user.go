@@ -48,7 +48,7 @@ func GetDbMap(user, password, hostname, port, database string) *gorp.DbMap {
 	checkErr(err, "sql.Open failed")
 
 	// construct a gorp DbMap
-	dbMap := &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{"InnoDB", "UTF8MB4"}}
+	dbMap := &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{Engine: "InnoDB", Encoding: "UTF8MB4"}}
 
 	// add a table, setting the table name to 'posts' and
 	// specifying that the Id property is an auto incrementing PK
