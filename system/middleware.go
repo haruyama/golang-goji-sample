@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/coopernurse/gorp"
+	"github.com/go-gorp/gorp"
 	"github.com/go-utils/uslice"
 	"github.com/golang/glog"
 	"github.com/gorilla/sessions"

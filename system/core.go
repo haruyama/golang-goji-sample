@@ -11,7 +11,7 @@ import (
 
 	"crypto/sha256"
 
-	"github.com/coopernurse/gorp"
+	"github.com/go-gorp/gorp"
 	"github.com/golang/glog"
 	"github.com/gorilla/sessions"
 	"github.com/haruyama/golang-goji-sample/models"

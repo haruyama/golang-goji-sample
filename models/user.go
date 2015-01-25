@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"code.google.com/p/go.crypto/bcrypt"
-	"github.com/coopernurse/gorp"
+	"github.com/go-gorp/gorp"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang/glog"
 )
