@@ -127,6 +127,7 @@ func (application *Application) ApplyCsrfProtection(c *web.C, h http.Handler) ht
 			Name:   csrfProtection.Cookie,
 			Value:  csrfToken,
 			Secure: csrfProtection.Secure,
+			Path:   "/",
 		})
 		h.ServeHTTP(w, r)
 	}
