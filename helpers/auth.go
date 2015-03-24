@@ -1,7 +1,7 @@
 package helpers
 
 import (
-	"code.google.com/p/go.crypto/bcrypt"
+	"golang.org/x/crypto/bcrypt"
 	"github.com/go-gorp/gorp"
 	"github.com/haruyama/golang-goji-sample/models"
 )
