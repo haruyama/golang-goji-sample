@@ -2,7 +2,7 @@ package helpers
 
 import (
 	"golang.org/x/crypto/bcrypt"
-	"github.com/go-gorp/gorp"
+	"gopkg.in/gorp.v1"
 	"github.com/haruyama/golang-goji-sample/models"
 )
 
