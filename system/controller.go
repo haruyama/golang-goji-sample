@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"html/template"
 
-	"github.com/go-gorp/gorp"
+	"gopkg.in/gorp.v1"
 	"github.com/gorilla/sessions"
 	"github.com/zenazn/goji/web"
 )
