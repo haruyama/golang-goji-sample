@@ -11,12 +11,12 @@ import (
 
 	"crypto/sha256"
 
-	"gopkg.in/gorp.v1"
 	"github.com/golang/glog"
 	"github.com/gorilla/sessions"
 	"github.com/haruyama/golang-goji-sample/models"
 	"github.com/pelletier/go-toml"
 	"github.com/zenazn/goji/web"
+	"gopkg.in/gorp.v1"
 )
 
 type CsrfProtection struct {
@@ -45,6 +45,7 @@ func (application *Application) Init(filename *string) {
 	io.WriteString(hash, config.Get("cookie.mac_secret").(string))
 	application.Store = sessions.NewCookieStore(hash.Sum(nil))
 	application.Store.Options = &sessions.Options{
+		Path:     "/",
 		HttpOnly: true,
 		Secure:   config.Get("cookie.secure").(bool),
 	}
