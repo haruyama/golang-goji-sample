@@ -27,7 +27,7 @@ type CsrfProtection struct {
 }
 
 type Application struct {
-	Config         *toml.TomlTree
+	Config         *toml.Tree
 	Template       *template.Template
 	Store          *sessions.CookieStore
 	DbMap          *gorp.DbMap
@@ -49,7 +49,7 @@ func (application *Application) Init(filename *string) {
 		HttpOnly: true,
 		Secure:   config.Get("cookie.secure").(bool),
 	}
-	dbConfig := config.Get("database").(*toml.TomlTree)
+	dbConfig := config.Get("database").(*toml.Tree)
 	application.DbMap = models.GetDbMap(
 		dbConfig.Get("user").(string),
 		dbConfig.Get("password").(string),

@@ -8,12 +8,11 @@ import (
 	"net/http"
 	"strings"
 
-	"gopkg.in/gorp.v1"
-	"github.com/go-utils/uslice"
 	"github.com/golang/glog"
 	"github.com/gorilla/sessions"
 	"github.com/haruyama/golang-goji-sample/models"
 	"github.com/zenazn/goji/web"
+	"gopkg.in/gorp.v1"
 )
 
 // Makes sure templates are stored in the context
@@ -86,7 +85,13 @@ func isValidToken(a, b string) bool {
 var csrfProtectionMethodForNoXhr = []string{"POST", "PUT", "DELETE"}
 
 func isCsrfProtectionMethodForNoXhr(method string) bool {
-	return uslice.StrHas(csrfProtectionMethodForNoXhr, strings.ToUpper(method))
+	m := strings.ToUpper(method)
+	for _, mm := range csrfProtectionMethodForNoXhr {
+		if m == mm {
+			return true
+		}
+	}
+	return false
 }
 
 func (application *Application) ApplyCsrfProtection(c *web.C, h http.Handler) http.Handler {
